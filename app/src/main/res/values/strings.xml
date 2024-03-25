@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Hello Music</string>
+    <string name="list">Songs</string>
+    <string name="previousDesc">To go to previous song</string>
+    <string name="nextDesc">To go to next song</string>
+    <string name="pauseDesc">To pause the song</string>
+    <string name="playDesc">To play the song</string>
+</resources>
