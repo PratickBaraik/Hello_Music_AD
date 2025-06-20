@@ -21,11 +21,13 @@ class MainActivity : AppCompatActivity(), MusicAdapter.SongClick {
     private lateinit var binding: ActivityMainBinding
     private lateinit var musicAdapter: MusicAdapter
     var musicService: MusicService? = null
+    private var running = 0
 
     private val connection = object: ServiceConnection {
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
             val binder = p1 as MusicService.MusicBinder
             musicService = binder.getService()
+            musicService?.initializeSeekBar(binding.seekBar)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -58,6 +60,34 @@ class MainActivity : AppCompatActivity(), MusicAdapter.SongClick {
                 play()
             }
         }
+
+        binding.previous.setOnClickListener {
+            playPrevious()
+        }
+
+        binding.next.setOnClickListener {
+            playNext()
+        }
+    }
+
+    fun playPrevious() {
+        val list = getSongList()
+        if(running - 1 >= 0) {
+            running = running - 1
+        } else {
+            running = list.size - 1
+        }
+        onSongClick(list.get(running), running)
+    }
+
+    fun playNext() {
+        val list = getSongList()
+        if(running + 1 <= list.size) {
+            running = running + 1
+        } else {
+            running = 0
+        }
+        onSongClick(list.get(running), running)
     }
 
     fun play() {
@@ -86,10 +116,7 @@ class MainActivity : AppCompatActivity(), MusicAdapter.SongClick {
             MusicModel(R.raw.jamal_kudu, getSongTitle(R.raw.jamal_kudu), getMp3FileLength(R.raw.jamal_kudu)),
             MusicModel(R.raw.lashkare, getSongTitle(R.raw.lashkare), getMp3FileLength(R.raw.lashkare)),
             MusicModel(R.raw.million, getSongTitle(R.raw.million), getMp3FileLength(R.raw.million)),
-            MusicModel(R.raw.pyaar_ban_gaye, getSongTitle(R.raw.pyaar_ban_gaye), getMp3FileLength(R.raw.pyaar_ban_gaye)),
-            MusicModel(R.raw.qafira, getSongTitle(R.raw.qafira), getMp3FileLength(R.raw.qafira)),
-            MusicModel(R.raw.sher_khul_gaye, getSongTitle(R.raw.sher_khul_gaye), getMp3FileLength(R.raw.sher_khul_gaye)),
-            MusicModel(R.raw.zindagi_tere_naam, getSongTitle(R.raw.zindagi_tere_naam), getMp3FileLength(R.raw.zindagi_tere_naam)),
+            MusicModel(R.raw.pyaar_ban_gaye, getSongTitle(R.raw.pyaar_ban_gaye), getMp3FileLength(R.raw.pyaar_ban_gaye))
         )
     }
 

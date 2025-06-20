@@ -5,7 +5,9 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Binder
+import android.os.Handler
 import android.os.IBinder
+import android.widget.SeekBar
 
 class MusicService: Service() {
 
@@ -73,5 +75,40 @@ class MusicService: Service() {
         fun getService(): MusicService {
             return this@MusicService
         }
+    }
+
+    fun initializeSeekBar(seekBar: SeekBar) {
+       seekBar.max = mediaPlayer?.duration?: 0
+        seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if(fromUser) {
+                    mediaPlayer?.seekTo(progress)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+            }
+        })
+
+        val handler = Handler()
+        handler.postDelayed(object: Runnable {
+            override fun run() {
+                if(mediaPlayer != null) {
+                    try {
+                        seekBar.progress = mediaPlayer?.currentPosition?: 0
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                } else {
+                    handler.removeCallbacks(this)
+                }
+                handler.postDelayed(this, 1000)
+            }
+        }, 0)
     }
 }
